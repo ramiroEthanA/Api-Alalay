@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const NinoModel = require('../models/Nino');
+const moment = require('moment');
 //M1 muestra todos los datos
 router.get('/traerNinos', async (req, res) => {
     try {
@@ -179,11 +180,17 @@ router.get('/ordenarNinos', async (req, res) => {
 
         // Ordenar los niños por apellido y luego por nombre en orden ascendente
         ninos = ninos.sort((a, b) => {
+            // Verificar si ambos niños tienen definidos los campos apellido y nombre
+            if (!a.apellido || !b.apellido || !a.nombre || !b.nombre) {
+                return 0; // Si uno de los campos es undefined, no se puede comparar
+            }
+
             // Primero, ordenar por apellido
             const comparacionApellido = a.apellido.localeCompare(b.apellido);
             if (comparacionApellido !== 0) {
                 return comparacionApellido;
             }
+            
             // Si los apellidos son iguales, ordenar por nombre
             return a.nombre.localeCompare(b.nombre);
         });
@@ -197,5 +204,41 @@ router.get('/ordenarNinos', async (req, res) => {
 });
 
 
+//M11 Obtener todos los niños y calcular su edad a partir de la fecha de nacimiento
+router.get('/calcularEdadNinos', async (req, res) => {
+    try {
+        // Obtener todos los niños de la base de datos
+        const ninos = await NinoModel.find();
+
+        // Calcular la edad de cada niño
+        const ninosConEdad = ninos.map(nino => {
+            const fechaNacimiento = moment(nino.fecha_nacimiento);
+            const edad = moment().diff(fechaNacimiento, 'years');
+            return { ...nino.toObject(), edad };
+        });
+
+        // Devolver los niños con sus edades calculadas como respuesta
+        res.json(ninosConEdad);
+    } catch (error) {
+        // Si hay un error, devolver un mensaje de error con el código de estado 500
+        res.status(500).json({ mensaje: error.message });
+    }
+});
+
+// Agrupación por etapa y conteo de niños en cada etapa
+router.get('/contarNinosPorEtapa', async (req, res) => {
+    try {
+        // Realizar la agregación para contar niños por etapa
+        const resultadoAgregacion = await NinoModel.aggregate([
+            { $group: { _id: "$cod_etapa", totalNinos: { $sum: 1 } } }
+        ]);
+
+        // Devolver el resultado de la agregación como respuesta
+        res.json(resultadoAgregacion);
+    } catch (error) {
+        // Si hay un error, devolver un mensaje de error con el código de estado 500
+        res.status(500).json({ mensaje: error.message });
+    }
+});
 
 module.exports = router;
