@@ -15,7 +15,7 @@ router.get('/traerNinos', async (req, res) => {
 //M2 Crea usario nuevo
 router.post('/crearNino', async (req, res) => {
     try {
-        // Crear un nuevo niño utilizando los datos proporcionados en el cuerpo de la solicitud
+        // Crear un nuevo niño
         const nuevoNino = new NinoModel({
             nombre: req.body.nombre,
             apellido: req.body.apellido,
@@ -34,7 +34,7 @@ router.post('/crearNino', async (req, res) => {
         // Devolver el niño guardado como respuesta
         res.status(201).json(ninoGuardado);
     } catch (error) {
-        // Si hay un error, devolver un mensaje de error con el código de estado 500
+        // Si hay un error, devolver un mensaje de error con el codigo de estado 500
         res.status(500).json({ mensaje: error.message });
     }
 });
@@ -42,10 +42,10 @@ router.post('/crearNino', async (req, res) => {
 // M3 Actualiza un niño por su ID
 router.put('/editarNino/:id', async (req, res) => {
     try {
-        // Busca el niño por su ID y actualiza los campos proporcionados en el cuerpo de la solicitud
+        // Busca el niño por su ID y actualiza los campos proporcionados en el cuerpo
         const ninoActualizado = await NinoModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
-        // Verifica si se encontró y actualizó correctamente el niño
+        // Verifica si se encontro y actualizo correctamente el niño
         if (!ninoActualizado) {
             return res.status(404).json({ mensaje: 'Niño no encontrado' });
         }
@@ -53,7 +53,7 @@ router.put('/editarNino/:id', async (req, res) => {
         // Devuelve el niño actualizado como respuesta
         res.json(ninoActualizado);
     } catch (error) {
-        // Si hay un error, devolver un mensaje de error con el código de estado 500
+        // Si hay un error, devolver un mensaje de error con el codigo de estado 500
         res.status(500).json({ mensaje: error.message });
     }
 });
@@ -64,7 +64,7 @@ router.delete('/eliminarNino/:id', async (req, res) => {
         // Busca el niño por su ID y elimínalo de la base de datos
         const ninoEliminado = await NinoModel.findByIdAndDelete(req.params.id);
 
-        // Verifica si se encontró y eliminó correctamente el niño
+        // Verifica si se encontro y elimino correctamente el niño
         if (!ninoEliminado) {
             return res.status(404).json({ mensaje: 'Niño no encontrado' });
         }
@@ -72,7 +72,7 @@ router.delete('/eliminarNino/:id', async (req, res) => {
         // Devuelve el niño eliminado como respuesta
         res.json(ninoEliminado);
     } catch (error) {
-        // Si hay un error, devolver un mensaje de error con el código de estado 500
+        // Si hay un error, devolver un mensaje de error con el codigo de estado 500
         res.status(500).json({ mensaje: error.message });
     }
 });
@@ -83,7 +83,7 @@ router.get('/obtenerNino/:id', async (req, res) => {
         // Busca el niño por su ID en la base de datos
         const nino = await NinoModel.findById(req.params.id);
 
-        // Verifica si se encontró el niño
+        // Verifica si se encontro el niño
         if (!nino) {
             return res.status(404).json({ mensaje: 'Niño no encontrado' });
         }
@@ -91,7 +91,7 @@ router.get('/obtenerNino/:id', async (req, res) => {
         // Devuelve el niño encontrado como respuesta
         res.json(nino);
     } catch (error) {
-        // Si hay un error, devolver un mensaje de error con el código de estado 500
+        // Si hay un error, devolver un mensaje de error con el codigo de estado 500
         res.status(500).json({ mensaje: error.message });
     }
 });
@@ -112,7 +112,7 @@ router.get('/buscarPorApellido', async (req, res) => {
         // Devuelve los niños encontrados como respuesta
         res.json(ninos);
     } catch (error) {
-        // Si hay un error, devolver un mensaje de error con el código de estado 500
+        // Si hay un error, devolver un mensaje de error con el codigo de estado 500
         res.status(500).json({ mensaje: error.message });
     }
 });
@@ -126,7 +126,7 @@ router.get('/contarNinos', async (req, res) => {
         // Devolver el total de registros como respuesta
         res.json({ totalNinos });
     } catch (error) {
-        // Si hay un error, devolver un mensaje de error con el código de estado 500
+        // Si hay un error, devolver un mensaje de error con el codigo de estado 500
         res.status(500).json({ mensaje: error.message });
     }
 });
@@ -155,10 +155,10 @@ router.get('/OrdenApellido', async (req, res) => {
 // M9  Busqueda por patron en la direccion de los niños
 router.get('/buscarPorDireccion', async (req, res) => {
     try {
-        // Obtener el patrón proporcionado por el usuario desde Postman
+        // Obtener el patron proporcionado por el usuario desde Postman
         const patronDireccion = req.query.direccion;
 
-        // Realizar la búsqueda de niños cuya dirección coincida con el patrón proporcionado
+        // Realizar la busqueda de niños cuya direccin coincida con el patron proporcionado
         const ninos = await NinoModel.find({
             direccion: { $regex: new RegExp(`.*${patronDireccion}.*`, 'i') }
         });
@@ -166,7 +166,7 @@ router.get('/buscarPorDireccion', async (req, res) => {
         // Devolver los niños encontrados como respuesta
         res.json(ninos);
     } catch (error) {
-        // Si hay un error, devolver un mensaje de error con el código de estado 500
+        // Si hay un error, devolver un mensaje de error con el codigo de estado 500
         res.status(500).json({ mensaje: error.message });
     }
 }); 
@@ -210,7 +210,7 @@ router.get('/calcularEdadNinos', async (req, res) => {
         // Obtener todos los niños de la base de datos
         const ninos = await NinoModel.find();
 
-        // Calcular la edad de cada niño
+        // Calcular la edad de cada niño, se usa la funcion moment que ya se instalo anteriormente
         const ninosConEdad = ninos.map(nino => {
             const fechaNacimiento = moment(nino.fecha_nacimiento);
             const edad = moment().diff(fechaNacimiento, 'years');
@@ -220,23 +220,23 @@ router.get('/calcularEdadNinos', async (req, res) => {
         // Devolver los niños con sus edades calculadas como respuesta
         res.json(ninosConEdad);
     } catch (error) {
-        // Si hay un error, devolver un mensaje de error con el código de estado 500
+        // Si hay un error, devolver un mensaje de error con el codigo de estado 500
         res.status(500).json({ mensaje: error.message });
     }
 });
 
-// Agrupación por etapa y conteo de niños en cada etapa
+// Agrupacion por etapa y conteo de niños en cada etapa
 router.get('/contarNinosPorEtapa', async (req, res) => {
     try {
-        // Realizar la agregación para contar niños por etapa
+        // Realizar la agregacion para contar niños por etapa
         const resultadoAgregacion = await NinoModel.aggregate([
             { $group: { _id: "$cod_etapa", totalNinos: { $sum: 1 } } }
         ]);
 
-        // Devolver el resultado de la agregación como respuesta
+        // Devolver el resultado de la agregacion como respuesta
         res.json(resultadoAgregacion);
     } catch (error) {
-        // Si hay un error, devolver un mensaje de error con el código de estado 500
+        // Si hay un error, devolver un mensaje de error con el codigo de estado 500
         res.status(500).json({ mensaje: error.message });
     }
 });
