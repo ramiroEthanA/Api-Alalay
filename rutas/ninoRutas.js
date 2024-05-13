@@ -172,7 +172,7 @@ router.get('/buscarPorDireccion', async (req, res) => {
 }); 
 
 
-// M10 Obtener todos los niños y ordenarlos por apellido y luego por nombre
+// M10 Obtener todos los niños y ordenarlos por apellido y por nombre
 router.get('/ordenarNinos', async (req, res) => {
     try {
         // Obtener todos los niños de la base de datos
@@ -225,7 +225,7 @@ router.get('/calcularEdadNinos', async (req, res) => {
     }
 });
 
-// Agrupacion por etapa y conteo de niños en cada etapa
+// M12 Agrupacion por etapa y conteo de niños en cada etapa
 router.get('/contarNinosPorEtapa', async (req, res) => {
     try {
         // Realizar la agregacion para contar niños por etapa
@@ -238,6 +238,7 @@ router.get('/contarNinosPorEtapa', async (req, res) => {
     } catch (error) {
         // Si hay un error, devolver un mensaje de error con el codigo de estado 500
         res.status(500).json({ mensaje: error.message });
+        
     }
 });
 
